@@ -151,9 +151,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 if(checker.length==0)
                 Text('6 Notes', style: TextStyle(fontSize: 20)),
-                Text(
-                    'Orientation: ${orientation == Orientation.portrait ? 'Portrait' : 'Landscape'}',
-                    style: TextStyle(fontSize: 20)),
+                // Text(
+                //     'Orientation: ${orientation == Orientation.portrait ? 'Portrait' : 'Landscape'}',
+                //     style: TextStyle(fontSize: 20)),
                 if(longPressed && checker.length>0)
                 Text('${checker.length} selected', style: TextStyle(fontSize: 20)),
 
@@ -199,10 +199,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     10), // Add some spacing between the Row and the GridView
             Expanded(
               child: GridView.builder(
+
                 shrinkWrap: true,
                 itemCount: 6, // Replace this with the actual item count
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+
+                  crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
                 ),
@@ -232,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Stack(
                       children: [
                         Container(
-                          height: 500,
+                          height: orientation == Orientation.portrait ? 500 : 200,
                           width:300,
                           padding: EdgeInsets.fromLTRB(10, 22, 10, 10),
                           decoration: BoxDecoration(
