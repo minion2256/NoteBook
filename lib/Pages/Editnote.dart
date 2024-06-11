@@ -1,16 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:mynotebook2/Pages/search.dart';
-
+import 'package:mynotebook2/Database/helpers/UserHelper.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:intl/intl.dart';
 class Editnote extends StatefulWidget {
-  const Editnote({super.key, required this.id});
+  const Editnote({super.key, required this.id,this.type});
 
 final int id;
+final String ?  type;
   @override
   State<Editnote> createState() => _EditnoteState();
 }
 
 class _EditnoteState extends State<Editnote> {
   bool  edit =false;
+  UserHelper userHelper = UserHelper();
+
+
+  Future<void> saveNotes(Map<String, dynamic> userData) async {
+
+    Database db = await userHelper.database;
+    int  insert = await db.insert('notes', userData);
+    if (insert >0)
+    {
+      edit = false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(duration:Duration(seconds: 5) ,
+            content: Center(
+              child:  Text( ' Saved Successfully'
+              ),
+            )
+        ),
+      );
+
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(duration:Duration(seconds: 5) ,
+            content: Text('Something Went wrong',
+            )),
+      );
+    }
+
+  }
+
+  void initState() {
+
+    super.initState();
+    if(widget.type =="create")
+    {
+        edit = true;
+        print("widget type");
+        print(widget.type);
+        print(widget.id
+        );
+      // setState(() {
+      // });
+    }
+  }
+
   var note = TextEditingController();
 
 
@@ -34,19 +82,31 @@ class _EditnoteState extends State<Editnote> {
 
                     });
                     print("icon pressed");
+                    print(widget.type);
                   },
                   icon:  Icon(Icons.add_circle),
                 ),
                 if(edit)
                   IconButton(
                     onPressed: () {
-                      setState(() {
-                        edit = false;
-                            print(note.text);
-                            print(note.value);
-                        // note =  widget.id as TextEditingController;
 
-                      });
+                            print(note.text);
+                        DateTime now = DateTime.now();
+                        Map<String, dynamic> toMap() {
+                          return {
+                            'title': 'null',
+                            'content': note.text,
+                            'date': DateFormat().format(now),
+                          };
+                        }
+                        var  data = toMap();
+
+
+                        saveNotes(data);
+
+
+                        // note =  widget.id as TextEditingController;
+                      // });
                       print(" save icon pressed");
                     },
                     icon:  Icon(Icons.save),
@@ -77,36 +137,11 @@ class _EditnoteState extends State<Editnote> {
           padding: EdgeInsets.only(
             top: MediaQuery.of(context).padding.top,
           ),
-          child: ListView(
+          child:
+          ListView(
             children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
+              Padding(padding: EdgeInsets.fromLTRB(0, 30, 0, 0)),
 
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: NetworkImage('https://media.istockphoto.com/id/1399788030/photo/portrait-of-young-confident-indian-woman-pose-on-background.jpg?s=1024x1024&w=is&k=20&c=VQ_i-ojGNiLSNYrco2c2xM0iUjsZKLF7zRJ4PSMpmEI='),
-                    ),
-                    Text(
-                      'Alvin John Maganga',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      'pinyojohn@gmail.com',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               ListTile(
                 leading: Icon(Icons.read_more),
                 title: Text('Reminder'),

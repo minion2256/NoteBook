@@ -69,8 +69,6 @@ class SearchInside extends SearchDelegate<String> {
       else{
         // suggestion = id;
 
-
-
          suggestion = highlightCharacter(id,query);
 
         return
@@ -78,6 +76,7 @@ class SearchInside extends SearchDelegate<String> {
             child:Padding(
               padding:EdgeInsets.all(10) ,
               child: StyledText(
+                style: TextStyle(fontSize: 17),
                 text:suggestion,
                 tags: {
                   'highlight': StyledTextCustomTag(
@@ -100,7 +99,7 @@ class SearchInside extends SearchDelegate<String> {
     Container(
       child:Padding(
         padding:EdgeInsets.all(10) ,
-        child:Text(suggestion) ,
+        child:Text(suggestion,  style: TextStyle(fontSize: 17),) ,
       )
       ,
     );
