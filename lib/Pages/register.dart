@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'package:mynotebook2/Pages/home.dart';
+
 import 'package:mynotebook2/Pages/login.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'dart:convert';
@@ -117,6 +119,12 @@ String base64UrlEncode(input) {
                 )
                ),
           );
+          Future.delayed(Duration(seconds: 5));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyHomePage(title: 'My Note Book')),
+          );
 
         }
     else{
@@ -132,9 +140,10 @@ String base64UrlEncode(input) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.fromLTRB(50,0,50,0), // Add padding if needed
+      body: SingleChildScrollView(
+        child:
+        Container(
+          padding: EdgeInsets.fromLTRB(20,150,50,20), // Add padding if needed
           child:
             Form(
             key: _formKey,
@@ -142,7 +151,7 @@ String base64UrlEncode(input) {
 
             Column(
               // mainAxisSize: MainAxisSize.min, // Make the column take minimum space
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,// Center the children within the column
               children: [
                 Center(
@@ -273,7 +282,7 @@ String base64UrlEncode(input) {
                               ))
                       ),
                     ),
-    SizedBox(height: 10),
+          SizedBox(height: 10),
                     TextButton(onPressed:() {
 
                       Navigator.push(

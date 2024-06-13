@@ -1,20 +1,34 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:mynotebook2/Database/helpers/UserHelper.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DeleteClass {
   int number = 0;
   String name = '';
+   dynamic list ;
 
-  DeleteClass(this.number, this.name);
+  DeleteClass(this.number, this.name,this.list);
+
+  UserHelper userHelper = UserHelper();
 
 
+  Future<int> deleteNotes  () async{
+    print("list is ${list}");
+    String ids = list.join(',');
+    Database db = await userHelper.database;
+    var datanotes =  await db.delete("notes",  where: 'id IN ($ids)');
+    return datanotes;
+
+  }
   Future<int> deleteValues(BuildContext context) async {
     // Perform deletion logic
     Navigator.of(context).pop();
+    var deleted = await deleteNotes();
 
     AlertDialog deletion = AlertDialog(
-      content: Text( "$number $name Deleted Successfully"),
+
+      content: Text( deleted>0 ? "$deleted $name Deleted Successfully":"Failed to delete !!!" ),
 
     );
     showDialog(

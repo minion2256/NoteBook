@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:mynotebook2/Pages/search.dart';
 import 'package:mynotebook2/Database/helpers/UserHelper.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:mynotebook2/Pages/login.dart';
+import 'package:mynotebook2/Pages/home.dart';
 import 'package:intl/intl.dart';
 class Editnote extends StatefulWidget {
-  const Editnote({super.key, required this.id,this.type});
+  const Editnote({super.key, required this.id,this.type,this.thecontent});
 
 final int id;
-final String ?  type;
+final String ?  type;  final dynamic  thecontent;
+
   @override
   State<Editnote> createState() => _EditnoteState();
 }
@@ -15,15 +18,24 @@ final String ?  type;
 class _EditnoteState extends State<Editnote> {
   bool  edit =false;
   UserHelper userHelper = UserHelper();
+   var currentNoteContainer ;
 
 
   Future<void> saveNotes(Map<String, dynamic> userData) async {
 
+     int   insert =0 ;
     Database db = await userHelper.database;
-    int  insert = await db.insert('notes', userData);
+    if(widget.type =="create")
+    {
+      insert = await db.insert('notes', userData);
+    }else{
+      insert = await db.update('notes', userData,where: 'id=?',whereArgs: [widget.id] );
+    }
+
     if (insert >0)
     {
       edit = false;
+      getCurrentNote();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(duration:Duration(seconds: 5) ,
             content: Center(
@@ -44,19 +56,41 @@ class _EditnoteState extends State<Editnote> {
 
   }
 
+
+
+  void getCurrentNote() async
+  {
+     var cnote = await currentNote();
+     if(cnote.length>0)
+       {
+           currentNoteContainer = cnote[0]['content'];
+           print("this is content ${widget.id} and ${currentNoteContainer}");
+
+       }
+  }
+
+  Future<List> currentNote() async {
+
+    Database db = await userHelper.database;
+
+    var query  = await db.query('notes', where: 'id=?',whereArgs: [widget.id]);
+
+// print(" the  current data is ${query}");
+      return query;
+  }
+
   void initState() {
 
     super.initState();
-    if(widget.type =="create")
-    {
-        edit = true;
-        print("widget type");
-        print(widget.type);
-        print(widget.id
-        );
-      // setState(() {
-      // });
-    }
+
+
+      setState(() {
+        if(widget.type =="create")
+          {
+            edit =true;
+          }
+        getCurrentNote();
+      });
   }
 
   var note = TextEditingController();
@@ -69,6 +103,20 @@ class _EditnoteState extends State<Editnote> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            IconButton(
+              onPressed: () {
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MyHomePage(title: 'My Note Book')),
+                );
+
+                // print("icon pressed");
+                // print(widget.type);
+              },
+              icon:  Icon(Icons.arrow_back),
+            ),
             Text("Title"),
             Row(
               children: [
@@ -77,12 +125,12 @@ class _EditnoteState extends State<Editnote> {
                   onPressed: () {
                     setState(() {
                     edit = true;
-                    note = TextEditingController(text: '${widget.id} ' );
+                    note = TextEditingController(text: '${currentNoteContainer}' );
                     //   note =  widget.id as TextEditingController;
 
                     });
-                    print("icon pressed");
-                    print(widget.type);
+                    // print("icon pressed");
+                    // print(widget.type);
                   },
                   icon:  Icon(Icons.add_circle),
                 ),
@@ -113,9 +161,7 @@ class _EditnoteState extends State<Editnote> {
                   ),
                 IconButton(
                   onPressed: () {
-                    print("icon pressed");
-                    String data ="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
-                    showSearch(context:context, delegate:SearchInside(id:data));
+                    showSearch(context:context, delegate:SearchInside(id:currentNoteContainer));
 
                   },
                   icon: Icon(Icons.search),
@@ -156,13 +202,7 @@ class _EditnoteState extends State<Editnote> {
                   // Handle item 1 tap
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.save),
-                title: Text('save as'),
-                onTap: () {
-                  // Handle item 1 tap
-                },
-              ),
+
             ],
           ),
         ),
@@ -175,7 +215,7 @@ class _EditnoteState extends State<Editnote> {
             crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-              if(!edit)Text(widget.id.toString())
+              if(!edit)Text(currentNoteContainer?.isNotEmpty == true ? currentNoteContainer! : widget.thecontent)
               , if(edit) TextField(
                 controller: note,
                 autofocus: true,
