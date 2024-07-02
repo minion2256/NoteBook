@@ -51,7 +51,35 @@ class UserHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
         content TEXT,
+        collabo INTEGER default 0,
         date TEXT
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE invited (
+        invited_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        note_id INTEGER,
+        date TEXT,
+        FOREIGN KEY (note_id) REFERENCES notes (id) ON DELETE CASCADE
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE col_notes (
+        col_note_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        invitedId INTEGER ,
+        content TEXT,
+        collaborator TEXT,
+        date TEXT,
+        FOREIGN KEY (invitedId) REFERENCES invited (invited_id) ON DELETE CASCADE 
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE collaborators (
+        collaborator_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        invited_collabo INTEGER ,
+        collaborator TEXT,
+        date TEXT,
+        FOREIGN KEY (invited_collabo) REFERENCES invited (invited_id) ON DELETE CASCADE 
       )
     ''');
   }

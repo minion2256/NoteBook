@@ -241,6 +241,7 @@ print("itemCounter ${itemCounter}");
 
                     child: GridView.builder(
 
+
                       shrinkWrap: true,
                       itemCount: itemCounter, //  item count
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -254,6 +255,7 @@ print("itemCounter ${itemCounter}");
 
     if (index != null && index >= 0 && index < dataNotes.length) {
       var note = index != null ? dataNotes[index] : '';
+      String noteContent = note['content'];
       return GestureDetector(
         onTap: () {
           if (!longPressed) {
@@ -263,7 +265,7 @@ print("itemCounter ${itemCounter}");
                   builder: (context) =>
                       Editnote(id: note['id'],
                           type: "update",
-                          thecontent: note['content'])),
+                          thecontent: note['content'],collabo:note['collabo'])),
             );
           } else {
             setState(() {
@@ -288,10 +290,25 @@ print("itemCounter ${itemCounter}");
                 // color: index % 2 == 0 ? Colors.grey : Colors.purple,
               ),
 
-              child: Text(
-                note['content']
-                ,
-                style: TextStyle(fontSize: 15, color: Colors.black),
+              child: Stack(
+
+                children: [
+
+
+                  Text(
+                    noteContent.length > 100
+                        ? "${noteContent.substring(0, 100)} ..."
+                        : noteContent                    ,
+                    style: TextStyle(fontSize: 15, color: Colors.black),
+                  ),
+                  if (note['collabo'] ==1 )
+                  Positioned(
+                    top: 115,
+                      left: 133,
+                      child: Icon(color:Colors.purple[200],Icons.group_rounded))
+
+                ],
+
               ),
             ),
             if (longPressed)

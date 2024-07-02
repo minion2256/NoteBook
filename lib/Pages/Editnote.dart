@@ -4,11 +4,13 @@ import 'package:mynotebook2/Database/helpers/UserHelper.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:mynotebook2/Pages/login.dart';
 import 'package:mynotebook2/Pages/home.dart';
+import 'package:mynotebook2/Pages/collaborator.dart';
 import 'package:intl/intl.dart';
 class Editnote extends StatefulWidget {
-  const Editnote({super.key, required this.id,this.type,this.thecontent});
+  const Editnote({super.key, required this.id,this.type,this.thecontent,this.collabo});
 
 final int id;
+final dynamic collabo;
 final String ?  type;  final dynamic  thecontent;
 
   @override
@@ -199,7 +201,16 @@ class _EditnoteState extends State<Editnote> {
                 leading: Icon(Icons.group_add),
                 title: Text('Invite collaborators'),
                 onTap: () {
+                  Navigator.pop(context);
                   // Handle item 1 tap
+                  print(" inviting");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Collabo(noteid: widget.id
+                            )),
+                  );
                 },
               ),
 
